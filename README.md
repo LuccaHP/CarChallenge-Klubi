@@ -1,13 +1,17 @@
 # Lucca - AutoFind - Marketplace de Carros com Chatbot IA
 
-Aplicação web para busca e comparação de veículos, com chatbot integrado alimentado por LLM (Groq/Llama 3.3) para auxiliar o usuário na decisão de compra.
+Aplicação web para busca e comparação de veículos, com chatbot integrado alimentado por LLM (Google Gemini) para auxiliar o usuário na decisão de compra.
+
+## Aplicação em produção
+
+**Demo:** [https://carchallenge-klubi.onrender.com](https://carchallenge-klubi.onrender.com)
 
 ## Como Rodar
 
 ### Pré-requisitos
 
 - Node.js 20+
-- Conta gratuita no [Groq](https://console.groq.com) para obter uma API key
+- Conta gratuita no [Google AI Studio](https://aistudio.google.com/app/apikey) para obter uma API key
 
 ### Instalação
 
@@ -21,7 +25,7 @@ npm install
 
 # Configure a variável de ambiente
 cp .env
-# Edite .env e adicione sua GROQ_API_KEY
+# Edite .env e adicione sua GOOGLE_GENERATIVE_AI_API_KEY
 
 # Rode o projeto
 npm run dev
@@ -35,8 +39,8 @@ Acesse [http://localhost:3000](http://localhost:3000).
 |--------|------------|
 | Frontend | Next.js 16 + React 19 + TypeScript |
 | Estilização | Tailwind CSS 4 |
-| LLM | Groq (Llama 3.3 70B) via Vercel AI SDK |
-| Deploy | Vercel |
+| LLM | Google Gemini via AI SDK (streaming) |
+| Deploy | Render |
 
 ## Funcionalidades
 
@@ -63,9 +67,9 @@ Acesse [http://localhost:3000](http://localhost:3000).
 
 **Por que Next.js?** App Router com API Routes permite ter frontend e backend no mesmo projeto, simplificando deploy e DX.
 
-**Por que Groq?** Tier gratuito generoso, latência muito baixa (~200ms), suporte ao Llama 3.3 70B que entende bem português.
+**Por que Gemini?** Tier gratuito no Google AI Studio, ótima latência e qualidade para respostas em português com modelos da família Gemini.
 
-**Por que Vercel AI SDK?** Abstração unificada para streaming de LLM, hooks React prontos (`useChat`), suporte a múltiplos provedores.
+**Por que AI SDK?** Abstração unificada para streaming de LLM, hooks React prontos (`useChat`), suporte a múltiplos provedores.
 
 **UX do chatbot**: Popup fixo que não interfere na navegação do marketplace. O usuário pode usar os filtros tradicionais OU o chat conforme preferir.
 
@@ -76,7 +80,7 @@ Acesse [http://localhost:3000](http://localhost:3000).
 Marketplace B2B2C com três fontes de receita:
 
 - **Comissão por lead qualificado**: Concessionárias pagam por cada lead gerado (contato, agendamento de test drive). Modelo CPA (custo por aquisição), estimado em R$ 50-150 por lead.
-- **Assinatura premium para vendedores**: Plano mensal para concessionárias que querem destaque nos resultados, analytics avançados e integração com CRM. Faixas de R$ 299-999/mês.
+- **Assinatura premium para vendedores**: Plano mensal para concessionárias que querem destaque nos resultados, analytics avançados e integração com CRM (Plano futuro). Faixas de R$ 299-999/mês.
 - **Anúncios patrocinados**: Cards destacados na grid de resultados e menções prioritárias no chatbot.
 
 ### 2. Estratégia de Aquisição
@@ -88,6 +92,7 @@ Marketplace B2B2C com três fontes de receita:
 
 **Fase 2 - Pago (meses 3-6):**
 - Google Ads em termos de intenção de compra
+- Google Ads para leads concessionárias
 - Meta Ads com retargeting para visitantes
 - Parcerias com influenciadores automotivos
 
