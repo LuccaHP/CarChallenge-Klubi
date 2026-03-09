@@ -5,6 +5,7 @@ import { buildSystemPrompt } from "@/lib/chat-prompt";
 const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim();
 const google = createGoogleGenerativeAI({ apiKey: apiKey || undefined });
 const model = process.env.GEMINI_MODEL?.trim() || "gemini-2.0-flash";
+const MAX_HISTORY_MESSAGES = 6;
 
 function normalizeMessages(input: unknown): ModelMessage[] {
   if (!Array.isArray(input)) return [];
@@ -59,6 +60,20 @@ function normalizeMessages(input: unknown): ModelMessage[] {
     .filter((message): message is ModelMessage => message !== null);
 }
 
+function trimConversation(messages: ModelMessage[]): ModelMessage[] {
+  return messages.slice(-MAX_HISTORY_MESSAGES);
+}
+
+function getLatestUserMessage(messages: ModelMessage[]): string {
+  const latestUserMessage = [...messages]
+    .reverse()
+    .find((message) => message.role === "user");
+
+  return typeof latestUserMessage?.content === "string"
+    ? latestUserMessage.content
+    : "";
+}
+
 export async function POST(req: Request) {
   if (!apiKey) {
     return new Response(
@@ -72,18 +87,21 @@ export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
     const normalizedMessages = normalizeMessages(messages);
+    const recentMessages = trimConversation(normalizedMessages);
 
-    if (normalizedMessages.length === 0) {
+    if (recentMessages.length === 0) {
       return new Response(
         JSON.stringify({ error: "Nenhuma mensagem válida foi enviada." }),
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
+    const latestUserMessage = getLatestUserMessage(recentMessages);
+
     const result = streamText({
       model: google(model),
-      system: buildSystemPrompt(),
-      messages: normalizedMessages,
+      system: buildSystemPrompt(latestUserMessage),
+      messages: recentMessages,
     });
 
     return result.toUIMessageStreamResponse();
